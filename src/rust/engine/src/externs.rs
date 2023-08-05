@@ -676,8 +676,7 @@ pub fn with_vec<F, C, T>(c_ptr: *mut C, c_len: usize, f: F) -> T
 where
   F: FnOnce(&Vec<C>) -> T,
 {
-  let cs = unsafe { Vec::from_raw_parts(c_ptr, c_len, c_len) };
+  let cs = std::mem::ManuallyDrop::new(unsafe { Vec::from_raw_parts(c_ptr, c_len, c_len) });
   let output = f(&cs);
-  mem::forget(cs);
   output
 }
