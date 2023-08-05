@@ -879,9 +879,8 @@ fn with_scheduler<F, T>(scheduler_ptr: *mut Scheduler, f: F) -> T
 where
   F: FnOnce(&Scheduler) -> T,
 {
-  let scheduler = unsafe { Box::from_raw(scheduler_ptr) };
+  let scheduler = std::mem::ManuallyDrop::new(unsafe { Box::from_raw(scheduler_ptr) });
   let t = f(&scheduler);
-  mem::forget(scheduler);
   t
 }
 
@@ -892,9 +891,8 @@ fn with_session<F, T>(session_ptr: *mut Session, f: F) -> T
 where
   F: FnOnce(&Session) -> T,
 {
-  let session = unsafe { Box::from_raw(session_ptr) };
+  let session = std::mem::ManuallyDrop::new(unsafe { Box::from_raw(session_ptr) });
   let t = f(&session);
-  mem::forget(session);
   t
 }
 
@@ -905,9 +903,8 @@ fn with_execution_request<F, T>(execution_request_ptr: *mut ExecutionRequest, f:
 where
   F: FnOnce(&mut ExecutionRequest) -> T,
 {
-  let mut execution_request = unsafe { Box::from_raw(execution_request_ptr) };
+  let mut execution_request = std::mem::ManuallyDrop::new(unsafe { Box::from_raw(execution_request_ptr) });
   let t = f(&mut execution_request);
-  mem::forget(execution_request);
   t
 }
 
@@ -918,8 +915,7 @@ fn with_tasks<F, T>(tasks_ptr: *mut Tasks, f: F) -> T
 where
   F: FnOnce(&mut Tasks) -> T,
 {
-  let mut tasks = unsafe { Box::from_raw(tasks_ptr) };
+  let mut tasks = std::mem::ManuallyDrop::new(unsafe { Box::from_raw(tasks_ptr) });
   let t = f(&mut tasks);
-  mem::forget(tasks);
   t
 }
